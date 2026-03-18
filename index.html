@@ -3,93 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ömer's Garage | Selective Collection</title>
+    <title>Ömer's Garage | Vip Selective Collection</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
             --primary-red: #ff3131;
-            --bg-black: #080808;
-            --card-gray: #151515;
-            --neon-glow: 0 0 20px rgba(255, 49, 49, 0.8);
+            --bg-black: #050505; /* Biraz daha koyu siyah */
+            --card-gray: #111111; /* Kartlar daha belirgin */
+            --neon-glow: 0 0 25px rgba(255, 49, 49, 0.7);
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; line-height: 1.6; scroll-behavior: smooth; overflow-x: hidden; }
+        body { 
+            background-color: var(--bg-black); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6; 
+            scroll-behavior: smooth; 
+            overflow-x: hidden;
+            position: relative; /* Arka plan parçacıkları için */
+        }
 
-        /* --- REKLAM / WELCOME POPUP --- */
-        #ad-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 10000; transition: 0.5s ease-out;
+        /* --- ARKA PLAN PARÇACIKLARI (PARTICLES) CANVAS'I --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* İçeriğin arkasında kalması için */
+            opacity: 0.3; /* Çok göze batmaması için düşük opaklık */
         }
-        .ad-box {
-            background: #111; border: 2px solid var(--primary-red);
-            padding: 50px; border-radius: 30px; text-align: center;
-            box-shadow: var(--neon-glow); position: relative;
-            max-width: 90%; width: 500px; animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .ad-title { font-size: 45px; font-weight: 900; font-style: italic; color: #fff; margin-bottom: 20px; }
-        .ad-title span { color: var(--primary-red); text-shadow: var(--neon-glow); }
-        .ad-btn {
-            background: var(--primary-red); color: white; border: none;
-            padding: 15px 40px; border-radius: 50px; font-weight: 900;
-            cursor: pointer; font-size: 18px; transition: 0.3s;
-        }
-        .ad-btn:hover { transform: scale(1.1); box-shadow: var(--neon-glow); }
 
-        /* --- ANA SAYFA STİLLERİ --- */
+        /* --- YENİ LOGO TASARIMI (Premium) --- */
+        header { 
+            padding: 120px 20px 80px; 
+            text-align: center; 
+            background: radial-gradient(circle at center, rgba(30,30,30,0.5) 0%, rgba(5,5,5,0) 70%);
+            position: relative;
+        }
+        
+        .logo-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 0.8;
+            cursor: default;
+            user-select: none;
+            transition: var(--transition-smooth);
+        }
+        .logo-container:hover { transform: scale(1.02); }
+
+        .logo-white {
+            font-size: clamp(22px, 4vw, 38px);
+            font-weight: 400;
+            letter-spacing: 15px;
+            color: #ffffff;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .logo-red {
+            font-size: clamp(55px, 13vw, 120px);
+            font-weight: 900;
+            font-style: italic;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: -6px;
+            position: relative;
+            text-shadow: 0 15px 40px rgba(255, 49, 49, 0.4);
+        }
+
+        /* Logonun altındaki agresif spor çizgi */
+        .logo-red::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 8px;
+            background: var(--primary-red);
+            transform: skewX(-30deg);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* --- DİNAMİK İSTATİSTİKLER (STATS BAR) --- */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+        .stat-box {
+            background: linear-gradient(145deg, #151515, #0a0a0a);
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #1a1a1a;
+            border-left: 5px solid var(--primary-red);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-red);
+            box-shadow: var(--neon-glow);
+        }
+        .stat-number { 
+            font-size: 45px; 
+            font-weight: 900; 
+            color: #fff; 
+            display: block; 
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        .stat-label { 
+            color: #aaa; 
+            text-transform: uppercase; 
+            font-size: 13px; 
+            letter-spacing: 3px; 
+            font-weight: 700;
+        }
+
+        /* --- ARAÇ KARTLARI HOVER VE İNCE DETAYLAR --- */
+        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 20px; }
+        
+        .car-card { 
+            background: var(--card-gray); 
+            border-radius: 20px; /* Daha yuvarlak köseler */
+            border: 1px solid #1a1a1a; 
+            overflow: hidden; 
+            cursor: pointer; 
+            transition: var(--transition-smooth); 
+            position: relative;
+        }
+        
+        .img-container { 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            position: relative; 
+            overflow: hidden; 
+            background: #000; 
+        }
+        
+        .img-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.6; /* Varsayılan opaklık daha düşük */
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+        }
+        
+        /* Gelişmiş Hover Efektleri */
+        .car-card:hover { 
+            border-color: var(--primary-red); 
+            box-shadow: var(--neon-glow);
+            transform: translateY(-5px) scale(1.01);
+        }
+        
+        .car-card:hover img { 
+            opacity: 1; /* Üzerine gelince resim netleşir */
+            transform: scale(1.08); /* Hafif büyüme */
+        }
+
+        /* Kartın üzerine gelen kırmızı katman (Overlay) */
+        .img-container::after {
+            content: 'İNCELE';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(255, 49, 49, 0.5) 0%, rgba(255, 49, 49, 0) 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 4px;
+            opacity: 0; /* Varsayılan gizli */
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateY(20px); /* Hafif aşağıdan başlar */
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .car-card:hover .img-container::after { 
+            opacity: 1; 
+            transform: translateY(0); /* Yerine gelir */
+        }
+        
+        .car-info { 
+            padding: 20px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            text-align: center; 
+            letter-spacing: 1px;
+            background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+        }
+
+        /* --- DİĞER STİLLER (Yenilenmiş) --- */
         .instagram-badge {
             position: fixed; top: 20px; left: 20px; z-index: 1001;
             background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
-            padding: 10px 18px; border-radius: 50px; text-decoration: none;
+            padding: 12px 20px; border-radius: 50px; text-decoration: none;
             color: white; font-weight: 700; font-size: 14px; display: flex;
-            align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            align-items: center; gap: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.6);
             transition: 0.3s transform;
         }
-        .instagram-badge:hover { transform: scale(1.1); }
+        .instagram-badge:hover { transform: scale(1.1) rotate(-2deg); }
 
-        header { padding: 80px 20px 40px; text-align: center; }
-        .logo-container { font-size: clamp(35px, 10vw, 80px); font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -2px; }
-        .logo-white { color: #ffffff; }
-        .logo-red { color: var(--primary-red); text-shadow: var(--neon-glow); margin-left: 10px; }
+        .bottom-grid { max-width: 1400px; margin: 60px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; }
+        .box { background: var(--card-gray); padding: 40px; border-radius: 20px; border: 1px solid #1a1a1a; transition: var(--transition-smooth); }
+        .box:hover { border-color: #2a2a2a; }
+        .developer-box { grid-column: 1 / -1; text-align: center; border-color: #222; background: linear-gradient(180deg, #111 0%, #050505 100%); }
+        .dev-name { font-size: 26px; font-weight: 900; color: var(--primary-red); text-transform: uppercase; letter-spacing: 3px; text-shadow: var(--neon-glow); }
 
-        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 20px; }
-        .car-card { background: var(--card-gray); border-radius: 15px; border: 1px solid #222; overflow: hidden; cursor: pointer; transition: 0.3s; }
-        .car-card:hover { border-color: var(--primary-red); box-shadow: var(--neon-glow); }
-        .img-container { width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden; background: #000; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.5s; }
-        .car-card:hover img { opacity: 1; transform: scale(1.05); }
-        .car-info { padding: 15px; font-weight: 700; text-transform: uppercase; text-align: center; }
+        /* --- YENİ İLETİŞİM PANELİ STİLLERİ --- */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr; /* Form solda, hızlı linkler sağda */
+            gap: 30px;
+        }
 
-        .bottom-grid { max-width: 1400px; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; }
-        .box { background: var(--card-gray); padding: 35px; border-radius: 20px; border: 1px solid #222; }
-        .developer-box { grid-column: 1 / -1; text-align: center; border-color: #333; background: linear-gradient(180deg, #151515 0%, #0d0d0d 100%); }
-        .dev-name { font-size: 24px; font-weight: 900; color: var(--primary-red); text-transform: uppercase; letter-spacing: 2px; }
+        .contact-box {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 49, 49, 0.2);
+            padding: 40px;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
 
-        .contact-form { display: flex; flex-direction: column; gap: 15px; }
-        .contact-form input, .contact-form textarea { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 15px; color: #fff; font-family: inherit; outline: none; }
-        .contact-form button { background: var(--primary-red); color: #fff; border: none; padding: 18px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .contact-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 49, 49, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
-        .modal-content { background: #111; width: 100%; max-width: 700px; border-radius: 25px; border: 2px solid var(--primary-red); overflow: hidden; position: relative; }
-        #mi { width: 100%; height: auto; max-height: 400px; object-fit: cover; display: block; }
-        .modal-body { padding: 30px; text-align: center; }
-        
-        @media (max-width: 900px) { .container, .bottom-grid { grid-template-columns: 1fr; } .developer-box { grid-column: auto; } }
+        .contact-info-small {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #222;
+            transition: 0.3s;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-item:hover {
+            background: rgba(255, 49, 49, 0.1);
+            border-color: var(--primary-red);
+            transform: translateX(10px);
+        }
+
+        .contact-form input, .contact-form textarea {
+            background: rgba(0, 0, 0, 0.5) !important;
+            border: 1px solid #333 !important;
+            border-radius: 15px !important;
+            padding: 18px;
+            color: #fff;
+            font-family: inherit;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: var(--primary-red) !important;
+            background: rgba(255, 49, 49, 0.05) !important;
+            box-shadow: 0 0 20px rgba(255, 49, 49, 0.1);
+        }
+
+        .contact-form button {
+            background: var(--primary-red);
+            color: #fff;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .contact-form button:hover {
+            box-shadow: var(--neon-glow);
+            transform: scale(1.02);
+        }
+
+        /* --- MODAL VE REKLAM STİLLERİ --- */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.97); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: #0a0a0a; width: 100%; max-width: 700px; border-radius: 30px; border: 2px solid var(--primary-red); overflow: hidden; position: relative; box-shadow: var(--neon-glow); animation: modalIn 0.4s ease; }
+        @keyframes modalIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #mi { width: 100%; height: auto; max-height: 450px; object-fit: cover; display: block; border-bottom: 2px solid var(--primary-red); }
+        .modal-body { padding: 40px; text-align: center; }
+
+        #ad-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: flex; justify-content: center; align-items: center; z-index: 10000; transition: 0.6s ease; }
+        .ad-box { background: #0a0a0a; border: 2px solid var(--primary-red); padding: 60px; border-radius: 30px; text-align: center; box-shadow: var(--neon-glow); position: relative; max-width: 90%; width: 550px; animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .ad-title { font-size: 50px; font-weight: 900; font-style: italic; color: #fff; margin-bottom: 25px; text-transform: uppercase; letter-spacing: -2px; }
+        .ad-title span { color: var(--primary-red); text-shadow: var(--neon-glow); }
+        .ad-btn { background: var(--primary-red); color: white; border: none; padding: 18px 50px; border-radius: 50px; font-weight: 900; cursor: pointer; font-size: 18px; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; }
+
+        .auth-toggle { margin-top: 20px; font-size: 14px; color: #777; cursor: pointer; transition: 0.3s; }
+        .auth-toggle:hover { color: var(--primary-red); }
+
+        @media (max-width: 900px) { .container, .bottom-grid { grid-template-columns: 1fr; } .developer-box { grid-column: auto; } header { padding: 100px 20px 60px; } .stats-container { grid-template-columns: 1fr; } .contact-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
+    <canvas id="bg-canvas"></canvas>
+
     <div id="ad-overlay">
         <div class="ad-box">
             <h1 class="ad-title">ÖMER'S <span>GARAGE</span></h1>
-            <p style="margin-bottom: 25px; color: #bbb;">Vip Otomobil Dünyasına Hoşgeldiniz.</p>
+            <p style="margin-bottom: 30px; color: #aaa; font-size: 18px;">Vip Otomobil Dünyasına Hoşgeldiniz.</p>
             <button class="ad-btn" onclick="closeAd()">GARAJA GİRİŞ YAP</button>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-body">
+                <h2 id="auth-title" style="color:var(--primary-red); font-size: 36px; margin-bottom: 25px; font-weight: 900;">GARAJA KAYIT OL</h2>
+                <p style="margin-bottom: 20px; font-size: 15px; color: #aaa;">Yorum yapmak için önce kimliğini doğrulamalısın.</p>
+                <form id="auth-form" class="contact-form">
+                    <input type="text" id="reg-name" placeholder="Kullanıcı Adı" required>
+                    <input type="email" id="reg-email" placeholder="E-posta" required>
+                    <input type="password" id="reg-pass" placeholder="Şifre" required>
+                    <button type="submit" id="auth-btn">KAYDI TAMAMLA & YORUM YAP</button>
+                </form>
+                <p class="auth-toggle" onclick="toggleAuthMode()" id="auth-toggle-text">Zaten hesabın var mı? Giriş yap.</p>
+                <button onclick="closeAuth()" style="background:transparent; color:#555; border:none; margin-top:20px; cursor:pointer; font-size: 14px;">[ Kapat ]</button>
+            </div>
         </div>
     </div>
 
@@ -99,35 +366,51 @@
 
     <header>
         <div class="logo-container">
-            <span class="logo-white">ÖMER'S</span><span class="logo-red">GARAGE</span>
+            <span class="logo-white">ÖMER'S</span>
+            <span class="logo-red">GARAGE</span>
         </div>
     </header>
 
+    <div class="stats-container">
+        <div class="stat-box reveal">
+            <span class="stat-number count-me" data-target="3250">0</span>
+            <span class="stat-label">Toplam Beygir Gücü (HP)</span>
+        </div>
+        <div class="stat-box reveal">
+            <span class="stat-number count-me" data-target="6">0</span>
+            <span class="stat-label"> Selective VIP Araçlar</span>
+        </div>
+        <div class="stat-box reveal">
+            <span class="stat-number">3.2</span>
+            <span class="stat-label">Ortalama 0-100 (Saniye)</span>
+        </div>
+    </div>
+
     <div class="container">
         <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div class="car-card" onclick="openCar('m4')">
+            <div class="car-card reveal" onclick="openCar('m4')">
                 <div class="img-container"><img src="https://www.otokokpit.com/wp-content/uploads/2024/05/2025-bmw-m4-cs-1.jpg"></div>
                 <div class="car-info">BMW M4 CS 2025</div>
             </div>
-            <div class="car-card" onclick="openCar('audi')">
+            <div class="car-card reveal" onclick="openCar('audi')">
                 <div class="img-container"><img src="https://images.unsplash.com/photo-1603553329474-99f95f35394f?q=80&w=800"></div>
                 <div class="car-info">Audi R8 V10</div>
             </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="car-card" onclick="openCar('gclass')">
+            <div class="car-card reveal" onclick="openCar('gclass')">
                 <div class="img-container"><img src="https://www.mercedes-benz.com.tr/content/dam/hq/passengercars/cars/g-class/n465-pi/overview/spa-highlights/05-2025/images/mercedes-benz-g-class-n465-spa-g-steering-2400x2400-05-2025.jpg"></div>
                 <div class="car-info">Mercedes G-Klasse</div>
             </div>
-            <div class="car-card" onclick="openCar('p2008')">
+            <div class="car-card reveal" onclick="openCar('p2008')">
                 <div class="img-container"><img src="https://www.peugeot.com.tr/content/dam/peugeot/turkey/b2c/our-range/yeni-2008/2025/2008-hybrid-750X700_m.png?imwidth=768"></div>
                 <div class="car-info">Peugeot 2008 Hybrid</div>
             </div>
-            <div class="car-card" onclick="openCar('lambo')">
+            <div class="car-card reveal" onclick="openCar('lambo')">
                 <div class="img-container"><img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=800"></div>
                 <div class="car-info">Aventador S</div>
             </div>
-            <div class="car-card" onclick="openCar('porsche')">
+            <div class="car-card reveal" onclick="openCar('porsche')">
                 <div class="img-container"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800"></div>
                 <div class="car-info">Porsche 911 GT3</div>
             </div>
@@ -135,25 +418,56 @@
     </div>
 
     <div class="bottom-grid">
-        <div class="box">
-            <h2 style="color:var(--primary-red); margin-bottom: 20px;">HAKKIMIZDA</h2>
-            <p>Selam! Ben Ömer. 18 yaşındayım ve Bursa'da yaşıyorum.</p>
-            <p style="color:var(--primary-red); font-style: italic; font-weight: 700;">Doğunun Parisi Erzurum'dur.</p>
+        <div class="box reveal" style="grid-column: 1 / -1; background: linear-gradient(145deg, #1a1a1a, #0d0d0d); border-left: 5px solid var(--primary-red);">
+            <h2 style="color:var(--primary-red); margin-bottom: 25px; font-weight: 900; text-transform: uppercase; font-size: 30px; letter-spacing: 1px;">Ömer's Garage | Selective Collection</h2>
+            <p style="color: #ccc; margin-bottom: 15px; font-size: 17px;">Selam! Ben Ömer. 18 yaşındayım ve Bursa'da yaşıyorum. Bu dijital garaj, otomobillere olan tutkumun, estetik anlayışımın ve Selective Collection felsefemin bir yansımasıdır.</p>
+            <p style="color: #aaa; margin-bottom: 20px;">Her bir araç, sadece hızıyla değil, karakteri, tasarımı ve mühendisliğiyle bu koleksiyonda yer bulmuştur. Doğunun Paris'i Erzurum'un ruhunu, Bursa'nın modern dokusuyla harmanlayıp, otomobil dünyasının zirvesini buraya taşıyoruz.</p>
+            <p style="color:var(--primary-red); font-style: italic; font-weight: 700; font-size: 20px; text-shadow: 0 0 10px rgba(255,49,49,0.3); background: rgba(255,49,49,0.05); display: inline-block; padding: 10px 20px; border-radius: 10px;">Doğunun Parisi Erzurum'dur.</p>
         </div>
 
-        <div class="box">
-            <h2 style="color:var(--primary-red); margin-bottom: 20px;">BİZE ULAŞIN</h2>
-            <form id="contact-form" class="contact-form">
-                <input type="text" name="name" placeholder="Adınız" required>
-                <input type="email" name="email" placeholder="E-posta" required>
-                <textarea name="message" rows="4" placeholder="Mesajınız..." required></textarea>
-                <button type="submit" id="btn">MESAJI GAZLA!</button>
-            </form>
-            <p id="status" style="margin-top:15px; font-weight: bold; display:none;"></p>
+        <div class="contact-container reveal" style="grid-column: 1 / -1; margin-top: 30px;">
+            <div class="contact-box">
+                <h2 style="color:var(--primary-red); margin-bottom: 10px; font-weight: 900; text-transform: uppercase; font-size: 30px; letter-spacing: 1px;">Bize Mesaj Gönder</h2>
+                <p style="color: #aaa; margin-bottom: 25px;">Garajımızla ilgili her türlü soru, işbirliği ve Selective araç teklifleriniz için pist hazır.</p>
+                
+                <form id="contact-form" class="contact-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <input type="text" name="name" placeholder="Adınız Soyadınız" required>
+                        <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+                    </div>
+                    <textarea name="message" id="contact-message" rows="5" placeholder="Mesajınızı buraya bırakın..." required style="margin-bottom: 20px;"></textarea>
+                    <button type="submit" id="btn" style="width: 100%;">MESAJI PİSTTEN GÖNDER 🚀</button>
+                </form>
+                <p id="status" style="margin-top:20px; font-weight: bold; display:none; text-align:center; padding: 15px; border-radius: 12px;"></p>
+            </div>
+
+            <div class="contact-info-small">
+                <a href="https://instagram.com/om3rfyc" target="_blank" class="info-item reveal">
+                    <span style="font-size: 30px;">📸</span>
+                    <div>
+                        <strong style="display: block; font-size: 18px;">Instagram</strong>
+                        <small style="color: #888;">@om3rfyc</small>
+                    </div>
+                </a>
+                <a href="mailto:iletisim@omersgarage.com" class="info-item reveal">
+                    <span style="font-size: 30px;">📧</span>
+                    <div>
+                        <strong style="display: block; font-size: 18px;">E-Posta</strong>
+                        <small style="color: #888;">Direkt Hat</small>
+                    </div>
+                </a>
+                <div class="info-item reveal" style="cursor: default;">
+                    <span style="font-size: 30px;">📍</span>
+                    <div>
+                        <strong style="display: block; font-size: 18px;">Lokasyon</strong>
+                        <small style="color: #888;">Bursa, Türkiye</small>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="box developer-box">
-            <h3 style="font-size: 14px; color: #666; margin-bottom: 5px;">GELİŞTİRİCİLER</h3>
+        <div class="box developer-box reveal" style="grid-column: 1 / -1;">
+            <h3 style="font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px;">GELİŞTİRİCİ</h3>
             <div class="dev-name">ÖMER FARUK YACAN</div>
         </div>
     </div>
@@ -162,36 +476,152 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <img id="mi" src="">
             <div class="modal-body">
-                <h2 id="mt" style="color:var(--primary-red); font-size: 32px; margin-bottom: 10px;"></h2>
-                <p id="ms" style="font-size: 18px; color: #eee; font-weight: bold;"></p>
+                <h2 id="mt" style="color:var(--primary-red); font-size: 36px; margin-bottom: 15px; font-weight: 900; text-transform: uppercase;"></h2>
+                <p id="ms" style="font-size: 20px; color: #fff; font-weight: bold; background: #1a1a1a; display: inline-block; padding: 10px 25px; border-radius: 50px; border: 1px solid #222;"></p>
             </div>
         </div>
     </div>
 
     <script>
+        // EmailJS Init
         (function() { emailjs.init("4fwv8uFfH2Ffj80u-"); })();
 
-        // Reklam Kapatma
+        // --- ARKA PLAN PARÇACIKLARI (PARTICLES) JS ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particlesArray = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.01;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.1;
+                }
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Beyaz parçacıklar
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.random() * Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < 80; i++) { particlesArray.push(new Particle()); }
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        // --- SCROLL REVEAL YAPILANDIRMASI ---
+        const sr = ScrollReveal({
+            origin: 'bottom',
+            distance: '50px',
+            duration: 1000,
+            delay: 150,
+            reset: false // Sadece bir kere çalışsın
+        });
+        sr.reveal('.reveal', { interval: 100 });   // Kartlar ve kutular sırayla
+
+        // --- DİNAMİK SAYAÇ (COUNT UP) ---
+        function startCounters() {
+            const counters = document.querySelectorAll('.count-me');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const speed = 150; // Hız (daha yüksek = daha yavaş)
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 10);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // Reklamı Kapat ve Sayaçları Başlat
         function closeAd() {
             const overlay = document.getElementById('ad-overlay');
             overlay.style.opacity = '0';
-            setTimeout(() => overlay.style.display = 'none', 500);
+            overlay.style.transform = 'scale(1.05)'; // Hafif büyüme efekti
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                startCounters(); // Sayaçları başlat
+            }, 600);
         }
 
+        // --- MEVCUT JS FONKSİYONLARI ---
+        let isUserRegistered = false; 
+        let isLoginMode = false;
+        function closeAuth() { document.getElementById('auth-modal').style.display = 'none'; }
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const btn = document.getElementById('auth-btn');
+            const toggleText = document.getElementById('auth-toggle-text');
+            const nameField = document.getElementById('reg-name');
+            if(isLoginMode) {
+                title.innerText = "GİRİŞ YAP"; btn.innerText = "GARAJA GİR";
+                toggleText.innerText = "Hesabın yok mu? Kayıt ol.";
+                nameField.style.display = "none"; nameField.required = false;
+            } else {
+                title.innerText = "GARAJA KAYIT OL"; btn.innerText = "KAYDI TAMAMLA & YORUM YAP";
+                toggleText.innerText = "Zaten hesabın var mı? Giriş yap.";
+                nameField.style.display = "block"; nameField.required = true;
+            }
+        }
+        document.getElementById('auth-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userName = document.getElementById('reg-name').value || "Sürücü";
+            isUserRegistered = true; 
+            alert("Harika " + userName + "! Artık yorum yapabilir ve mesaj gönderebilirsin.");
+            closeAuth();
+        });
         document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            if(!isUserRegistered) { document.getElementById('auth-modal').style.display = 'flex'; return; }
             const b = document.getElementById('btn');
             const s = document.getElementById('status');
             b.innerText = "YOLA ÇIKTI...";
+            b.style.opacity = "0.7";
             emailjs.sendForm('service_480t845', 'template_a0ito3n', this)
                 .then(() => {
-                    s.innerText = "Mesaj iletildi! ✅"; s.style.color = "#00ff00"; s.style.display = "block"; this.reset();
+                    s.innerText = "Mesaj iletildi! ✅🚀"; s.style.background = "rgba(0, 255, 0, 0.1)"; s.style.color = "#00ff00"; s.style.border = "1px solid rgba(0,255,0,0.3)";
+                    s.style.display = "block"; this.reset();
                 }, () => {
-                    s.innerText = "Hata oluştu! ❌"; s.style.color = "#ff3131"; s.style.display = "block";
+                    s.innerText = "Hata oluştu! ❌ Herhalde motor arızası..."; s.style.background = "rgba(255, 49, 49, 0.1)"; s.style.color = "#ff3131"; s.style.border = "1px solid rgba(255,49,49,0.3)";
+                    s.style.display = "block";
                 })
-                .finally(() => b.innerText = "MESAJI GAZLA!");
+                .finally(() => { b.innerText = "MESAJI PİSTTEN GÖNDER🚀"; b.style.opacity = "1"; });
         });
-
         const cars = {
             m4: {t:'BMW M4 CS', s:'550 HP | 0-100: 3.4s', i:'https://www.otokokpit.com/wp-content/uploads/2024/05/2025-bmw-m4-cs-1.jpg'},
             audi: {t:'AUDI R8 V10', s:'620 HP | 0-100: 3.1s', i:'https://images.unsplash.com/photo-1603553329474-99f95f35394f?q=80&w=800'},
@@ -200,7 +630,6 @@
             lambo: {t:'AVENTADOR S', s:'740 HP | 0-100: 2.9s', i:'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=800'},
             porsche: {t:'PORSCHE 911 GT3', s:'510 HP | Pist Canavarı', i:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800'}
         };
-
         function openCar(key) {
             const car = cars[key];
             document.getElementById('mt').innerText = car.t;
