@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ömer's Garage | Selective Collection</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #ff3131;
+            --bg-black: #080808;
+            --card-gray: #151515;
+            --neon-glow: 0 0 20px rgba(255, 49, 49, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; line-height: 1.6; scroll-behavior: smooth; overflow-x: hidden; }
+
+        /* --- REKLAM / WELCOME POPUP --- */
+        #ad-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; transition: 0.5s ease-out;
+        }
+        .ad-box {
+            background: #111; border: 2px solid var(--primary-red);
+            padding: 50px; border-radius: 30px; text-align: center;
+            box-shadow: var(--neon-glow); position: relative;
+            max-width: 90%; width: 500px; animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .ad-title { font-size: 45px; font-weight: 900; font-style: italic; color: #fff; margin-bottom: 20px; }
+        .ad-title span { color: var(--primary-red); text-shadow: var(--neon-glow); }
+        .ad-btn {
+            background: var(--primary-red); color: white; border: none;
+            padding: 15px 40px; border-radius: 50px; font-weight: 900;
+            cursor: pointer; font-size: 18px; transition: 0.3s;
+        }
+        .ad-btn:hover { transform: scale(1.1); box-shadow: var(--neon-glow); }
+
+        /* --- ANA SAYFA STİLLERİ --- */
+        .instagram-badge {
+            position: fixed; top: 20px; left: 20px; z-index: 1001;
+            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+            padding: 10px 18px; border-radius: 50px; text-decoration: none;
+            color: white; font-weight: 700; font-size: 14px; display: flex;
+            align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: 0.3s transform;
+        }
+        .instagram-badge:hover { transform: scale(1.1); }
+
+        header { padding: 80px 20px 40px; text-align: center; }
+        .logo-container { font-size: clamp(35px, 10vw, 80px); font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -2px; }
+        .logo-white { color: #ffffff; }
+        .logo-red { color: var(--primary-red); text-shadow: var(--neon-glow); margin-left: 10px; }
+
+        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 20px; }
+        .car-card { background: var(--card-gray); border-radius: 15px; border: 1px solid #222; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .car-card:hover { border-color: var(--primary-red); box-shadow: var(--neon-glow); }
+        .img-container { width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden; background: #000; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.5s; }
+        .car-card:hover img { opacity: 1; transform: scale(1.05); }
+        .car-info { padding: 15px; font-weight: 700; text-transform: uppercase; text-align: center; }
+
+        .bottom-grid { max-width: 1400px; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; }
+        .box { background: var(--card-gray); padding: 35px; border-radius: 20px; border: 1px solid #222; }
+        .developer-box { grid-column: 1 / -1; text-align: center; border-color: #333; background: linear-gradient(180deg, #151515 0%, #0d0d0d 100%); }
+        .dev-name { font-size: 24px; font-weight: 900; color: var(--primary-red); text-transform: uppercase; letter-spacing: 2px; }
+
+        .contact-form { display: flex; flex-direction: column; gap: 15px; }
+        .contact-form input, .contact-form textarea { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 15px; color: #fff; font-family: inherit; outline: none; }
+        .contact-form button { background: var(--primary-red); color: #fff; border: none; padding: 18px; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+        .modal-content { background: #111; width: 100%; max-width: 700px; border-radius: 25px; border: 2px solid var(--primary-red); overflow: hidden; position: relative; }
+        #mi { width: 100%; height: auto; max-height: 400px; object-fit: cover; display: block; }
+        .modal-body { padding: 30px; text-align: center; }
+        
+        @media (max-width: 900px) { .container, .bottom-grid { grid-template-columns: 1fr; } .developer-box { grid-column: auto; } }
+    </style>
+</head>
+<body>
+
+    <div id="ad-overlay">
+        <div class="ad-box">
+            <h1 class="ad-title">ÖMER'S <span>GARAGE</span></h1>
+            <p style="margin-bottom: 25px; color: #bbb;">Vip Otomobil Dünyasına Hoşgeldiniz.</p>
+            <button class="ad-btn" onclick="closeAd()">GARAJA GİRİŞ YAP</button>
+        </div>
+    </div>
+
+    <a href="https://instagram.com/om3rfyc" target="_blank" class="instagram-badge">
+        <span>📸 @om3rfyc</span>
+    </a>
+
+    <header>
+        <div class="logo-container">
+            <span class="logo-white">ÖMER'S</span><span class="logo-red">GARAGE</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="car-card" onclick="openCar('m4')">
+                <div class="img-container"><img src="https://www.otokokpit.com/wp-content/uploads/2024/05/2025-bmw-m4-cs-1.jpg"></div>
+                <div class="car-info">BMW M4 CS 2025</div>
+            </div>
+            <div class="car-card" onclick="openCar('audi')">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1603553329474-99f95f35394f?q=80&w=800"></div>
+                <div class="car-info">Audi R8 V10</div>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="car-card" onclick="openCar('gclass')">
+                <div class="img-container"><img src="https://www.mercedes-benz.com.tr/content/dam/hq/passengercars/cars/g-class/n465-pi/overview/spa-highlights/05-2025/images/mercedes-benz-g-class-n465-spa-g-steering-2400x2400-05-2025.jpg"></div>
+                <div class="car-info">Mercedes G-Klasse</div>
+            </div>
+            <div class="car-card" onclick="openCar('p2008')">
+                <div class="img-container"><img src="https://www.peugeot.com.tr/content/dam/peugeot/turkey/b2c/our-range/yeni-2008/2025/2008-hybrid-750X700_m.png?imwidth=768"></div>
+                <div class="car-info">Peugeot 2008 Hybrid</div>
+            </div>
+            <div class="car-card" onclick="openCar('lambo')">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=800"></div>
+                <div class="car-info">Aventador S</div>
+            </div>
+            <div class="car-card" onclick="openCar('porsche')">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800"></div>
+                <div class="car-info">Porsche 911 GT3</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-grid">
+        <div class="box">
+            <h2 style="color:var(--primary-red); margin-bottom: 20px;">HAKKIMIZDA</h2>
+            <p>Selam! Ben Ömer. 18 yaşındayım ve Bursa'da yaşıyorum.</p>
+            <p style="color:var(--primary-red); font-style: italic; font-weight: 700;">Doğunun Parisi Erzurum'dur.</p>
+        </div>
+
+        <div class="box">
+            <h2 style="color:var(--primary-red); margin-bottom: 20px;">BİZE ULAŞIN</h2>
+            <form id="contact-form" class="contact-form">
+                <input type="text" name="name" placeholder="Adınız" required>
+                <input type="email" name="email" placeholder="E-posta" required>
+                <textarea name="message" rows="4" placeholder="Mesajınız..." required></textarea>
+                <button type="submit" id="btn">MESAJI GAZLA!</button>
+            </form>
+            <p id="status" style="margin-top:15px; font-weight: bold; display:none;"></p>
+        </div>
+
+        <div class="box developer-box">
+            <h3 style="font-size: 14px; color: #666; margin-bottom: 5px;">GELİŞTİRİCİLER</h3>
+            <div class="dev-name">ÖMER FARUK YACAN</div>
+        </div>
+    </div>
+
+    <div id="m" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="mi" src="">
+            <div class="modal-body">
+                <h2 id="mt" style="color:var(--primary-red); font-size: 32px; margin-bottom: 10px;"></h2>
+                <p id="ms" style="font-size: 18px; color: #eee; font-weight: bold;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() { emailjs.init("4fwv8uFfH2Ffj80u-"); })();
+
+        // Reklam Kapatma
+        function closeAd() {
+            const overlay = document.getElementById('ad-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 500);
+        }
+
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const b = document.getElementById('btn');
+            const s = document.getElementById('status');
+            b.innerText = "YOLA ÇIKTI...";
+            emailjs.sendForm('service_480t845', 'template_a0ito3n', this)
+                .then(() => {
+                    s.innerText = "Mesaj iletildi! ✅"; s.style.color = "#00ff00"; s.style.display = "block"; this.reset();
+                }, () => {
+                    s.innerText = "Hata oluştu! ❌"; s.style.color = "#ff3131"; s.style.display = "block";
+                })
+                .finally(() => b.innerText = "MESAJI GAZLA!");
+        });
+
+        const cars = {
+            m4: {t:'BMW M4 CS', s:'550 HP | 0-100: 3.4s', i:'https://www.otokokpit.com/wp-content/uploads/2024/05/2025-bmw-m4-cs-1.jpg'},
+            audi: {t:'AUDI R8 V10', s:'620 HP | 0-100: 3.1s', i:'https://images.unsplash.com/photo-1603553329474-99f95f35394f?q=80&w=800'},
+            gclass: {t:'G-KLASSE ELECTRIC', s:'EQ Teknolojisi | Yeni Nesil Off-Road', i:'https://www.mercedes-benz.com.tr/content/dam/hq/passengercars/cars/g-class/n465-pi/overview/spa-highlights/05-2025/images/mercedes-benz-g-class-n465-spa-g-steering-2400x2400-05-2025.jpg'},
+            p2008: {t:'PEUGEOT 2008 HYBRID', s:'136 HP | 48V Hybrid', i:'https://www.peugeot.com.tr/content/dam/peugeot/turkey/b2c/our-range/yeni-2008/2025/2008-hybrid-750X700_m.png?imwidth=768'},
+            lambo: {t:'AVENTADOR S', s:'740 HP | 0-100: 2.9s', i:'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=800'},
+            porsche: {t:'PORSCHE 911 GT3', s:'510 HP | Pist Canavarı', i:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800'}
+        };
+
+        function openCar(key) {
+            const car = cars[key];
+            document.getElementById('mt').innerText = car.t;
+            document.getElementById('ms').innerText = car.s;
+            document.getElementById('mi').src = car.i;
+            document.getElementById('m').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('m').style.display = 'none'; }
+    </script>
+</body>
+</html>
